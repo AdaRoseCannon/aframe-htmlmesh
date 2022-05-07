@@ -1,0 +1,25 @@
+{
+  "name": "aframe-html",
+  "version": "1.0.0",
+  "description": "Show HTML elements in AFrame",
+  "repository": "https://github.com/AdaRoseCannon/aframe-html",
+  "scripts": {
+    "docs": "awk '\n BEGIN {p=1}\n /^<!--DOCS-->/ {print;system(\"node ./aframe-to-md.mjs ./build/aframe-html.js\");p=0}\n /^<!--DOCS_END-->/ {p=1}\n p' README.md > ~README.md && mv ~README.md README.md",
+    "build": "rollup -c && find build -maxdepth 2 -iname \"*.js\" -not -type d -exec du -h {} \\;;npm run docs",
+    "develop": "rollup -w -c"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^21.0.2",
+    "@rollup/plugin-node-resolve": "^13.1.3",
+    "@rollup/plugin-strip": "^2.1.0",
+    "rollup": "^2.67.2",
+    "rollup-plugin-replace-imports-with-vars": "^1.0.2",
+    "rollup-plugin-terser": "^7.0.2",
+    "tablemark": "^3.0.0"
+  },
+  "dependencies": {
+    "three": "^0.140.0"
+  }
+}
