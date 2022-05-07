@@ -458,6 +458,11 @@
 		type: 'selector',
 	};
 
+	{
+		schema.description = `HTML element to use.`;
+		console.log(`Display an interactive HTML element in the scene.`);
+	}
+
 	AFRAME.registerComponent('html', {
 		schema: schema,
 		init() {

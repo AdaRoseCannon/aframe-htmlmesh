@@ -25,7 +25,7 @@ export default [
 			commonjs({
 				include: ["node_modules/**"],
 			}),
-			strip({labels: ['documentation']}),
+			// strip({labels: ['documentation']}),
 			// replace({ varType: 'const', replacementLookup: globals })
 		]
 	},
