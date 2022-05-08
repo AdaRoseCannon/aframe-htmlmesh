@@ -1,6 +1,6 @@
 /* jshint esversion: 9, -W097 */
 /* For dealing with spline curves */
-/* global THREE, AFRAME, setTimeout */
+/* global THREE, AFRAME, setTimeout, console */
 'use strict';
 
 import { HTMLMesh } from './HTMLMesh.js';

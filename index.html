@@ -25,7 +25,6 @@
 			margin: 0;
 			position:absolute;
 			inset:auto 0 0 0;
-			accent-color: hotpink;
 		}
     </style>
 	<script
@@ -94,8 +93,8 @@
 			material="shader:phong;color:paleblue;"></a-circle>
 		<a-entity hide-on-enter-ar position="0 -0.2 0" environment="lighting:none;preset:yavapai;skyType:atmosphere;">
 		</a-entity>
-		<a-torus-knot position="0 1.5 -1" radius="0.1" radius-tubular="0.02" material="shader:phong;reflectivity:0.280;" id="knot"></a-torus-knot>
-		<a-entity html="#my-interface" position="0 1.5 -0.5"></a-entity>
+		<a-torus-knot position="0 1.5 -1" radius="0.1" radius-tubular="0.02" material="shader:phong;reflectivity:0.3;" id="knot"></a-torus-knot>
+		<a-entity html="#my-interface" position="0.25 1.5 -0.5"></a-entity>
 	</a-scene>
 
 	<div id="dom-overlay">
@@ -105,14 +104,22 @@
 			</h1>
 		</header>
 		<div class="overlay-footer">
-			<section style="display: inline-block; background: green; border-radius: 1em; padding: 1em; margin:0;" id="my-interface">
+			<section style="display: inline-block; background: lavenderblush; color: #333333; border-radius: 1em; padding: 1em; margin:0; accent-color: hotpink;" id="my-interface">
 				<h2>Change Color</h2>
-				<div style="display: flex; flex-direction: column; font-size: 24px;">
-					<label><input onclick="handleRadio(this)" type="radio" name="avatar" value="red" checked> Red</label>
-					<label><input onclick="handleRadio(this)" type="radio" name="avatar" value="blue"> Blue</label>
-				</div>
-				<h2>Change Size</h2>
-				<input oninput="handleRange(this)" type="range" min="0.1" max="2" value="1" step="0.01" id="myRange" style="background-color: transparent;">
+				<fieldset>
+					<legend>Colour</legend>
+					<label><input onclick="handleRadio(this)" type="radio" name="color" value="red" checked> Red</label>
+					<label><input onclick="handleRadio(this)" type="radio" name="color" value="blue"> Blue</label>
+				</fieldset>
+				<fieldset>
+					<legend>Material:</legend>
+					<label><input onclick="handleCheckbox(this)" type="checkbox" name="wireframe"> Wireframe</label>
+					<label><input onclick="handleCheckbox(this)" type="checkbox" name="shiny" checked> Shiny</label>
+				</fieldset>
+				<fieldset>
+					<legend>Size:</legend>
+					<input oninput="handleRange(this)" type="range" min="0.1" max="2" value="1" step="0.01" id="myRange" style="background-color: transparent;">
+				</fieldset>
 				<button onclick="AFRAME.scenes[0].exitVR()" style="display: block;">Exit Immersive</button>
 			</section>
 		</div>
@@ -125,6 +132,11 @@
 		function handleRange(detail) {
 			const size = detail.value;
 			knot.object3D.scale.setScalar(size);
+		}
+		function handleCheckbox(detail) {
+			const name = detail.name;
+			if (name === 'wireframe') knot.setAttribute('material', 'wireframe', detail.checked);
+			if (name === 'shiny') knot.setAttribute('material', 'reflectivity', detail.checked ? '0.3' : 0);
 		}
 	</script>
 </body>

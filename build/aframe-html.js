@@ -110,25 +110,12 @@
 
 	}
 
-	function fillRoundRect(ctx, x, y, w, h, r) {
-		if (w < 2 * r) r = w / 2;
-		if (h < 2 * r) r = h / 2;
-		ctx.beginPath();
-		ctx.moveTo(x+r, y);
-		ctx.arcTo(x+w, y,   x+w, y+h, r);
-		ctx.arcTo(x+w, y+h, x,   y+h, r);
-		ctx.arcTo(x,   y+h, x,   y,   r);
-		ctx.arcTo(x,   y,   x+w, y,   r);
-		ctx.closePath();
-		ctx.fill();
-		return ctx;
-	}
-
 	const canvases = new WeakMap();
 
 	function html2canvas( element ) {
 
 		const range = document.createRange();
+		const color = new three.Color();
 
 		function Clipper( context ) {
 
@@ -199,13 +186,25 @@
 
 				}
 
-				context.font = style.fontSize + ' ' + style.fontFamily;
+				context.font = style.fontWeight + ' ' + style.fontSize + ' ' + style.fontFamily;
 				context.textBaseline = 'top';
 				context.fillStyle = style.color;
 				context.fillText( string, x, y + parseFloat(style.fontSize)*0.1 );
 
 			}
 
+		}
+
+		function roundRectPath(x, y, w, h, r) {
+			if (w < 2 * r) r = w / 2;
+			if (h < 2 * r) r = h / 2;
+			context.beginPath();
+			context.moveTo(x+r, y);
+			context.arcTo(x+w, y,   x+w, y+h, r);
+			context.arcTo(x+w, y+h, x,   y+h, r);
+			context.arcTo(x,   y+h, x,   y,   r);
+			context.arcTo(x,   y,   x+w, y,   r);
+			context.closePath();
 		}
 
 		function drawBorder( style, which, x, y, width, height ) {
@@ -222,7 +221,6 @@
 				context.moveTo( x, y );
 				context.lineTo( x + width, y + height );
 				context.stroke();
-
 			}
 
 		}
@@ -275,15 +273,14 @@
 
 				const backgroundColor = style.backgroundColor;
 
-				if ( element instanceof HTMLInputElement && element.type === 'radio') ;
-
+				// Get the border of the element used for fill and border
+				roundRectPath(x, y, width, height, parseFloat(style.borderRadius) );
 				if ( backgroundColor !== 'transparent' && backgroundColor !== 'rgba(0, 0, 0, 0)' ) {
-
 					context.fillStyle = backgroundColor;
-					fillRoundRect( context, x, y, width, height, parseFloat(style.borderRadius) );
-
+					context.fill();
 				}
 
+				// If all the borders match then stroke the round rectangle
 				const borders = ['borderTop', 'borderLeft', 'borderBottom', 'borderRight'];
 				let match = true;
 				let prevBorder = null;
@@ -304,6 +301,8 @@
 						context.stroke();
 					}
 				} else {
+
+					// Otherwise draw individual borders
 					drawBorder( style, 'borderTop', x, y, width, 0 );
 					drawBorder( style, 'borderLeft', x, y, 0, height );
 					drawBorder( style, 'borderBottom', x, y + height, width, 0 );
@@ -314,20 +313,49 @@
 
 					let accentColor = style.accentColor;
 					if (accentColor === undefined || accentColor === 'auto') accentColor = style.color;
+					color.set(accentColor);
+					const luminance = Math.sqrt( 0.299*color.r**2 + 0.587*color.g**2 + 0.114*color.b**2 );
+					const accentTextColor = luminance < 0.5 ? 'white' : '#111111';
 
 					if (element.type  === 'radio') {
-						const border = 2;
 						// Draw handle
+						roundRectPath(x,y,width,height,height);
 						context.fillStyle = 'white';
-						fillRoundRect(context, x,y,width,height,height);
 						context.strokeStyle = accentColor;
 						context.lineWidth = 1;
+						context.fill();
 						context.stroke();
 
-						
 						if (element.checked) {
+							const border = 2;
+							roundRectPath(x+border,y+border,width-border*2,height-border*2, height);
 							context.fillStyle = accentColor;
-							fillRoundRect(context, x+border,y+border,width-border*2,height-border*2, height);
+							context.strokeStyle = accentTextColor;
+							context.lineWidth = border;
+							context.fill();
+							context.stroke();
+						}
+					}
+
+					if (element.type  === 'checkbox') {
+						// Draw handle
+						roundRectPath(x,y,width,height,2);
+						context.fillStyle = element.checked ? accentColor : 'white';
+						context.strokeStyle = context.fillStyle = element.checked ? accentTextColor : accentColor;
+						context.lineWidth = 1;
+						context.stroke();
+						context.fill();
+
+						if (element.checked) {
+							const oldTextAlign = context.textAlign;
+							context.textAlign = 'center';
+							drawText( {
+								color: accentTextColor,
+								fontFamily: style.fontFamily,
+								fontSize: height + 'px',
+								fontWeight: 'bold'
+							}, x + width/2, y, '✔' );
+							context.textAlign = oldTextAlign;
 						}
 					}
 
@@ -336,17 +364,20 @@
 						const [min,max,value] = ['min','max','value'].map(property => parseFloat(element[property]));
 						const position = ((value-min)/(max-min)) * (width - height);
 						
-						context.fillStyle = '#333333';
-						fillRoundRect(context, x,y + height*0.25,width, height*0.5, height*0.25);
+						roundRectPath(x,y + height*0.25,width, height*0.5, height*0.25);
+						context.fillStyle = accentTextColor;
 						context.strokeStyle = accentColor;
 						context.lineWidth = 1;
+						context.fill();
 						context.stroke();
 
+						roundRectPath(x,y + height*0.25,position+height*0.5, height*0.5, height*0.25);
 						context.fillStyle = accentColor;
-						fillRoundRect(context, x,y + height*0.25,position+height*0.5, height*0.5, height*0.25);
+						context.fill();
 
+						roundRectPath(x + position,y,height, height, height*0.5);
 						context.fillStyle = accentColor;
-						fillRoundRect(context, x + position,y,height, height, height*0.5);
+						context.fill();
 					}
 
 					if (element.type === 'color' || element.type === 'text' || element.type === 'number' ) {
