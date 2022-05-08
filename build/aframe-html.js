@@ -1,8 +1,6 @@
 (function (three) {
 	'use strict';
 
-	/* jshint esversion: 9, -W097, unused: true */
-
 	class HTMLMesh extends three.Mesh {
 
 		constructor( dom ) {
@@ -109,6 +107,9 @@
 		}
 
 	}
+
+
+	//
 
 	const canvases = new WeakMap();
 
@@ -221,6 +222,7 @@
 				context.moveTo( x, y );
 				context.lineTo( x + width, y + height );
 				context.stroke();
+
 			}
 
 		}
@@ -260,6 +262,7 @@
 				context.restore();
 
 			} else {
+
 				if ( element.style.display === 'none' ) return;
 
 				const rect = element.getBoundingClientRect();
@@ -276,6 +279,7 @@
 				// Get the border of the element used for fill and border
 				roundRectPath(x, y, width, height, parseFloat(style.borderRadius) );
 				if ( backgroundColor !== 'transparent' && backgroundColor !== 'rgba(0, 0, 0, 0)' ) {
+
 					context.fillStyle = backgroundColor;
 					context.fill();
 				}
@@ -318,7 +322,6 @@
 					const accentTextColor = luminance < 0.5 ? 'white' : '#111111';
 
 					if (element.type  === 'radio') {
-						// Draw handle
 						roundRectPath(x,y,width,height,height);
 						context.fillStyle = 'white';
 						context.strokeStyle = accentColor;
@@ -338,10 +341,9 @@
 					}
 
 					if (element.type  === 'checkbox') {
-						// Draw handle
 						roundRectPath(x,y,width,height,2);
 						context.fillStyle = element.checked ? accentColor : 'white';
-						context.strokeStyle = context.fillStyle = element.checked ? accentTextColor : accentColor;
+						context.strokeStyle = element.checked ? accentTextColor : accentColor;
 						context.lineWidth = 1;
 						context.stroke();
 						context.fill();
@@ -360,10 +362,9 @@
 					}
 
 					if (element.type  === 'range') {
-						// Draw handle
 						const [min,max,value] = ['min','max','value'].map(property => parseFloat(element[property]));
 						const position = ((value-min)/(max-min)) * (width - height);
-						
+
 						roundRectPath(x,y + height*0.25,width, height*0.5, height*0.25);
 						context.fillStyle = accentTextColor;
 						context.strokeStyle = accentColor;
@@ -387,7 +388,9 @@
 						drawText( style, x + parseInt( style.paddingLeft ), y + parseInt( style.paddingTop ), element.value );
 
 						clipper.remove();
+
 					}
+
 				}
 
 			}

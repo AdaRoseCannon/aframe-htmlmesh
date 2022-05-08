@@ -1,8 +1,3 @@
-/* jshint esversion: 9, -W097, unused: true */
-/* For dealing with spline curves */
-/* global setTimeout, MutationObserver, clearTimeout,document,Node,HTMLCanvasElement, window,MouseEvent, HTMLInputElement */
-'use strict';
-
 import {
 	CanvasTexture,
 	LinearFilter,
@@ -120,6 +115,9 @@ class HTMLTexture extends CanvasTexture {
 
 }
 
+
+//
+
 const canvases = new WeakMap();
 
 function html2canvas( element ) {
@@ -231,6 +229,7 @@ function html2canvas( element ) {
 			context.moveTo( x, y );
 			context.lineTo( x + width, y + height );
 			context.stroke();
+
 		}
 
 	}
@@ -270,6 +269,7 @@ function html2canvas( element ) {
 			context.restore();
 
 		} else {
+
 			if ( element.style.display === 'none' ) return;
 
 			const rect = element.getBoundingClientRect();
@@ -286,6 +286,7 @@ function html2canvas( element ) {
 			// Get the border of the element used for fill and border
 			roundRectPath(x, y, width, height, parseFloat(style.borderRadius) );
 			if ( backgroundColor !== 'transparent' && backgroundColor !== 'rgba(0, 0, 0, 0)' ) {
+
 				context.fillStyle = backgroundColor;
 				context.fill();
 			}
@@ -328,7 +329,6 @@ function html2canvas( element ) {
 				const accentTextColor = luminance < 0.5 ? 'white' : '#111111';
 
 				if (element.type  === 'radio') {
-					// Draw handle
 					roundRectPath(x,y,width,height,height);
 					context.fillStyle = 'white';
 					context.strokeStyle = accentColor;
@@ -348,10 +348,9 @@ function html2canvas( element ) {
 				}
 
 				if (element.type  === 'checkbox') {
-					// Draw handle
 					roundRectPath(x,y,width,height,2);
 					context.fillStyle = element.checked ? accentColor : 'white';
-					context.strokeStyle = context.fillStyle = element.checked ? accentTextColor : accentColor;
+					context.strokeStyle = element.checked ? accentTextColor : accentColor;
 					context.lineWidth = 1;
 					context.stroke();
 					context.fill();
@@ -370,10 +369,9 @@ function html2canvas( element ) {
 				}
 
 				if (element.type  === 'range') {
-					// Draw handle
 					const [min,max,value] = ['min','max','value'].map(property => parseFloat(element[property]));
 					const position = ((value-min)/(max-min)) * (width - height);
-					
+
 					roundRectPath(x,y + height*0.25,width, height*0.5, height*0.25);
 					context.fillStyle = accentTextColor;
 					context.strokeStyle = accentColor;
@@ -397,7 +395,9 @@ function html2canvas( element ) {
 					drawText( style, x + parseInt( style.paddingLeft ), y + parseInt( style.paddingTop ), element.value );
 
 					clipper.remove();
+
 				}
+
 			}
 
 		}
