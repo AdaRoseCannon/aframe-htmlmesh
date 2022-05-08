@@ -4,7 +4,7 @@
 <a-entity html="#my-interface" position="0 1.5 -0.5"></a-entity>
 ```
 
-![image](https://user-images.githubusercontent.com/4225330/167274818-6d839716-9286-4e8a-b8b3-2ac6fb5062e8.png)
+![image](https://user-images.githubusercontent.com/4225330/167301172-50270499-ac85-4b14-a25e-f82454b19cb0.png)
 
 <!--DOCS-->
 Display an interactive HTML element in the scene.
