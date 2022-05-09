@@ -10,6 +10,15 @@ const schemaPointer = {
 		oneOf: ['event', 'proximity'],
 		default: 'event'
 	},
+	proximityElA: {
+		type: 'selector'
+	},
+	proximityElB: {
+		type: 'selector'
+	},
+	proximityTrigger: {
+		default: 0.015
+	},
 	downEvents: {
 		type: 'array',
 		default: ['selectstart']
@@ -36,11 +45,16 @@ documentation:
 	schemaPointer.downEvents.description = `Event to trigger 'mouseDown' events`;
 	schemaPointer.upEvents.description = `Event to trigger 'mouseUp' events`;
 	schemaPointer.clickEvents.description = `Event to trigger 'click' events`;
+	schemaPointer.proximityElA.description = `Elements to link together`;
+	schemaPointer.proximityElB.description = `Elements to link together`;
+	schemaPointer.proximityTrigger.description = `Distance the elements need to be count as being mouseDown`;
 	console.log(`Display an interactive HTML element in the scene.`);
 }
 
 const _pointer = new THREE.Vector2();
 const _event = { type: '', data: _pointer };
+const tempVector3A = new THREE.Vector3();
+const tempVector3B = new THREE.Vector3();
 AFRAME.registerComponent('html-pointer', {
 	schema: schemaPointer,
 	init() {
@@ -53,8 +67,17 @@ AFRAME.registerComponent('html-pointer', {
 		this.onIntersectionCleared = _e => this.htmlEl = null;
 		this.el.addEventListener('raycaster-intersection', this.onIntersection);
 		this.el.addEventListener('raycaster-intersection-cleared', this.onIntersectionCleared);
+		
+		const geom = new THREE.TorusGeometry( 0.007, 0.002, 5, 12 );
+		const mesh = new THREE.Mesh(
+			geom, new THREE.MeshBasicMaterial( { color: 0x000000 } )
+		);
+		this.cursor = mesh;
+		this.el.setObject3D('cursor', mesh);
+		this.prevD = Infinity;
 	},
-	handle(type, e) {
+	handle(type) {
+		this.cursor.visible = false;
 		if (this.htmlEl) {
 			const intersection = this.el.components.raycaster.getIntersection(this.htmlEl);
 			if (intersection) {
@@ -63,6 +86,34 @@ AFRAME.registerComponent('html-pointer', {
 				_event.type = type;
 				_event.data.set( uv.x, 1 - uv.y );
 				mesh.dispatchEvent( _event );
+
+				this.cursor.visible = true;
+				this.cursor.position
+				.set(0,0,-1)
+				.multiplyScalar(intersection.distance);
+			}
+		}
+	},
+	tick() {
+		this.handle('mousemove');
+		if (this.data.activationType === 'proximity') {
+			const a = this.data.proximityElA?.object3D;
+			const b = this.data.proximityElB?.object3D;
+			if (a && b) {
+				const aPos = a.getWorldPosition(tempVector3A);
+				const bPos = b.getWorldPosition(tempVector3B);
+				const d = aPos.distanceTo(bPos);
+				
+				// was further now closer
+				if (d <= this.data.proximityTrigger && this.prevD > this.data.proximityTrigger) {
+					this.handle('mousedown');
+				}
+				// was closer now further
+				if (d > this.data.proximityTrigger && this.prevD <= this.data.proximityTrigger) {
+					this.handle('mouseup');
+					this.handle('click');
+				}
+				this.prevD = d;
 			}
 		}
 	},
@@ -100,6 +151,7 @@ AFRAME.registerComponent('html-pointer', {
 	remove() {
 		this.el.removeEventListener('raycaster-intersection', this.onIntersection);
 		this.el.removeEventListener('raycaster-intersection-cleared', this.onIntersectionCleared);
+		this.el.removeObject3D('cursor');
 	},
 });
 
@@ -114,6 +166,7 @@ AFRAME.registerComponent('html', {
 		const mesh = new HTMLMesh(this.data);
 		this.el.setObject3D('html', mesh);
 		this.data.addEventListener('input', this.rerender);
+		this.data.addEventListener('change', this.rerender);
 	},
 	rerender() {
 		const mesh = this.el.getObject3D('html');

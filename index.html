@@ -29,8 +29,8 @@
     </style>
 	<script
 		src="https://cdn.jsdelivr.net/gh/aframevr/aframe@0d23f9b21c33ab6821046ce95835492cb84996c5/dist/aframe-master.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/handy-work@3.1.6/build/handy-controls.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/handy-work@3.1.6/build/magnet-helpers.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/handy-work@3.1.9/build/handy-controls.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/handy-work@3.1.9/build/magnet-helpers.min.js"></script>
 	<script
 		src="https://cdn.jsdelivr.net/npm/aframe-environment-component@1.3.1/dist/aframe-environment-component.min.js"></script>
 	<script src="build/aframe-html.js"></script>
@@ -45,6 +45,10 @@
 		shadow="type: pcfsoft"
 	>
 
+		<a-assets>
+			<a-mixin id="blink" blink-controls="cameraRig: #cameraRig; teleportOrigin: #head; collisionEntities:.navmesh;"></a-mixin>
+		</a-assets>
+
 		<a-entity id="cameraRig" spawn-in-circle="radius:3">
 			<!-- camera -->
 			<a-entity class="avatar-head" camera="near:0.01;" look-controls="pointerLockEnabled: false"
@@ -56,16 +60,23 @@
 
 				<!-- These also do teleportaion for Blink controls in VR -->
 				<!-- These are present for hand tracking but hands don't have joysticks so do nothing -->
-				<a-entity data-right="ray" mixin="blink" html-pointer="" rayCaster="objects:[html];far:0.3;showLine:true;"></a-entity>
-				<a-entity data-left="ray" mixin="blink" html-pointer="" rayCaster="objects:[html];far:0.3;showLine:true;"></a-entity>
+				<a-entity data-right="ray" mixin="blink" html-pointer="" rayCaster="objects:[html];far:0.3;showLine:false;lineColor:black;"></a-entity>
+				<a-entity data-left="ray" mixin="blink" html-pointer="" rayCaster="objects:[html];far:0.3;showLine:false;lineColor:black;"></a-entity>
 
 				<!-- Use the finger tips for teleporting when the user points in VR with hand tracking -->
 				<a-entity data-right="index-finger-tip" mixin="blink"
-					blink-controls="startEvents:pose_point;cancelEvents:pose_cancel_point;endEvents:pose_point_fuseLong;">
+					blink-controls="startEvents:pose_point;cancelEvents:pose_cancel_point;endEvents:pose_point_fuseLong;"
+					html-pointer="activationType:proximity;proximityTrigger:0.02;proximityElA:#rightThumbTip;proximityElB:#rightFingerJoint;" rayCaster="objects:[html];far:0.3;showLine:true;lineColor:black;">
 				</a-entity>
 				<a-entity data-left="index-finger-tip" mixin="blink"
-					blink-controls="startEvents:pose_point;cancelEvents:pose_cancel_point;endEvents:pose_point_fuseLong;">
+					blink-controls="startEvents:pose_point;cancelEvents:pose_cancel_point;endEvents:pose_point_fuseLong;"
+					html-pointer="activationType:proximity;proximityTrigger:0.02;proximityElA:#leftThumbTip;proximityElB:#leftFingerJoint;" rayCaster="objects:[html];far:0.3;showLine:true;lineColor:black;">
 				</a-entity>
+
+				<a-sphere radius="0.005" color="white" data-right="thumb-tip" id="rightThumbTip"></a-sphere>
+				<a-sphere radius="0.005" color="white" data-left="thumb-tip" id="leftThumbTip"></a-sphere>
+				<a-sphere radius="0.015" color="white" data-right="index-finger-phalanx-intermediate" id="rightFingerJoint"></a-sphere>
+				<a-sphere radius="0.015" color="white" data-left="index-finger-phalanx-intermediate" id="leftFingerJoint"></a-sphere>
 
 				<!-- These get drawn towards grabable objects, moving the whole hand and the attached elements-->
 				<a-entity id="left-magnet" position="0 0.6 0" class="avatar-hand-left" data-left="grip"
@@ -79,7 +90,7 @@
 
 				<!-- markers to let us know the real location of the hands, you probably want to make them visible="false" or just make them empty <a-entities> -->
 				<a-entity id="left-no-magnet" data-left="grip" data-no-magnet radius="0.01">
-					<a-entity html="#my-interface" position="-0.09313 0.05693 0.01635" rotation="-20 90 0" scale="0.5 0.5 0.5"></a-entity>
+					<a-entity html="#my-interface" position="-0.142 -0.0166 -0.02928" rotation="-80 90 0" scale="0.5 0.5 0.5"></a-entity>
 				</a-entity>
 				<a-entity id="right-no-magnet" data-right="grip" data-no-magnet radius="0.01"></a-entity>
 			</a-entity>
