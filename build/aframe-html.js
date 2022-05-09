@@ -196,7 +196,7 @@
 
 		}
 
-		function roundRectPath(x, y, w, h, r) {
+		function buildRectPath(x, y, w, h, r) {
 			if (w < 2 * r) r = w / 2;
 			if (h < 2 * r) r = h / 2;
 			context.beginPath();
@@ -277,7 +277,7 @@
 				const backgroundColor = style.backgroundColor;
 
 				// Get the border of the element used for fill and border
-				roundRectPath(x, y, width, height, parseFloat(style.borderRadius) );
+				buildRectPath(x, y, width, height, parseFloat(style.borderRadius) );
 				if ( backgroundColor !== 'transparent' && backgroundColor !== 'rgba(0, 0, 0, 0)' ) {
 
 					context.fillStyle = backgroundColor;
@@ -290,8 +290,7 @@
 				let prevBorder = null;
 				for (const border of borders) {
 					if (prevBorder) {
-						match = match && 
-						(style[ border + 'Width' ] === style[ prevBorder + 'Width' ]) &&
+						match = (style[ border + 'Width' ] === style[ prevBorder + 'Width' ]) &&
 						(style[ border + 'Color' ] === style[ prevBorder + 'Color' ]) &&
 						(style[ border + 'Style' ] === style[ prevBorder + 'Style' ]);
 					}
@@ -299,7 +298,7 @@
 					prevBorder = border;
 				}
 
-				// they all match so stroke the rectangle from before
+				// they all match so stroke the rectangle from before allows for border-radius
 				if (match) {
 					const width = parseFloat(style.borderTopWidth);
 					if ( style.borderTopWidth !== '0px' && style.borderTopStyle !== 'none' && style.borderTopColor !== 'transparent' && style.borderTopColor !== 'rgba(0, 0, 0, 0)' ) {
@@ -325,7 +324,7 @@
 					const accentTextColor = luminance < 0.5 ? 'white' : '#111111';
 
 					if (element.type  === 'radio') {
-						roundRectPath(x,y,width,height,height);
+						buildRectPath(x,y,width,height,height);
 						context.fillStyle = 'white';
 						context.strokeStyle = accentColor;
 						context.lineWidth = 1;
@@ -334,7 +333,7 @@
 
 						if (element.checked) {
 							const border = 2;
-							roundRectPath(x+border,y+border,width-border*2,height-border*2, height);
+							buildRectPath(x+border,y+border,width-border*2,height-border*2, height);
 							context.fillStyle = accentColor;
 							context.strokeStyle = accentTextColor;
 							context.lineWidth = border;
@@ -344,7 +343,7 @@
 					}
 
 					if (element.type  === 'checkbox') {
-						roundRectPath(x,y,width,height,2);
+						buildRectPath(x,y,width,height,2);
 						context.fillStyle = element.checked ? accentColor : 'white';
 						context.strokeStyle = element.checked ? accentTextColor : accentColor;
 						context.lineWidth = 1;
@@ -368,18 +367,18 @@
 						const [min,max,value] = ['min','max','value'].map(property => parseFloat(element[property]));
 						const position = ((value-min)/(max-min)) * (width - height);
 
-						roundRectPath(x,y + height*0.25,width, height*0.5, height*0.25);
+						buildRectPath(x,y + height*0.25,width, height*0.5, height*0.25);
 						context.fillStyle = accentTextColor;
 						context.strokeStyle = accentColor;
 						context.lineWidth = 1;
 						context.fill();
 						context.stroke();
 
-						roundRectPath(x,y + height*0.25,position+height*0.5, height*0.5, height*0.25);
+						buildRectPath(x,y + height*0.25,position+height*0.5, height*0.5, height*0.25);
 						context.fillStyle = accentColor;
 						context.fill();
 
-						roundRectPath(x + position,y,height, height, height*0.5);
+						buildRectPath(x + position,y,height, height, height*0.5);
 						context.fillStyle = accentColor;
 						context.fill();
 					}
@@ -491,17 +490,105 @@
 
 	/* jshint esversion: 9, -W097 */
 
-	const schema = {
+	const schemaPointer = {
+		activationType: {
+			oneOf: ['event', 'proximity'],
+			default: 'event'
+		},
+		downEvents: {
+			type: 'array',
+			default: ['selectstart']
+		},
+		upEvents: {
+			type: 'array',
+			default: ['selectend']
+		},
+		clickEvents: {
+			type: 'array',
+			default: ['select']
+		},
+
+	};
+
+	const schemaHTML = {
 		type: 'selector',
 	};
 
 	{
-		schema.description = `HTML element to use.`;
+		schemaHTML.description = `HTML element to use.`;
+		schemaPointer.activationType.description = `Use an event for mouse down and up or proximity between two elements`;
+		schemaPointer.downEvents.description = `Event to trigger 'mouseDown' events`;
+		schemaPointer.upEvents.description = `Event to trigger 'mouseUp' events`;
+		schemaPointer.clickEvents.description = `Event to trigger 'click' events`;
 		console.log(`Display an interactive HTML element in the scene.`);
 	}
 
+	const _pointer = new THREE.Vector2();
+	const _event = { type: '', data: _pointer };
+	AFRAME.registerComponent('html-pointer', {
+		schema: schemaPointer,
+		init() {
+			this.htmlEl = null;
+			this.onDown = e => this.handle('mousedown', e);
+			this.onUp = e => this.handle('mouseup', e);
+			this.onClick = e => this.handle('click', e);
+
+			this.onIntersection = e => this.htmlEl = e.detail.els[0];
+			this.onIntersectionCleared = _e => this.htmlEl = null;
+			this.el.addEventListener('raycaster-intersection', this.onIntersection);
+			this.el.addEventListener('raycaster-intersection-cleared', this.onIntersectionCleared);
+		},
+		handle(type, e) {
+			if (this.htmlEl) {
+				const intersection = this.el.components.raycaster.getIntersection(this.htmlEl);
+				if (intersection) {
+					const mesh = this.htmlEl.getObject3D('html');
+					const uv = intersection.uv;
+					_event.type = type;
+					_event.data.set( uv.x, 1 - uv.y );
+					mesh.dispatchEvent( _event );
+				}
+			}
+		},
+		update(oldData = {}) {
+			if (oldData.downEvents) {
+				for (const eventName of oldData.downEvents) {
+					this.el.removeEventListener(eventName, this.onDown);
+				}
+			}
+
+			if (oldData.upEvents) {
+				for (const eventName of oldData.upEvents) {
+					this.el.removeEventListener(eventName, this.onUp);
+				}
+			}
+
+			if (oldData.clickEvents) {
+				for (const eventName of oldData.clickEvents) {
+					this.el.removeEventListener(eventName, this.onClick);
+				}
+			}
+
+			if (this.data.activationType === 'event') {
+				for (const eventName of this.data.downEvents) {
+					this.el.addEventListener(eventName, this.onDown);
+				}
+				for (const eventName of this.data.upEvents) {
+					this.el.addEventListener(eventName, this.onUp);
+				}
+				for (const eventName of this.data.clickEvents) {
+					this.el.addEventListener(eventName, this.onClick);
+				}
+			}
+		},
+		remove() {
+			this.el.removeEventListener('raycaster-intersection', this.onIntersection);
+			this.el.removeEventListener('raycaster-intersection-cleared', this.onIntersectionCleared);
+		},
+	});
+
 	AFRAME.registerComponent('html', {
-		schema: schema,
+		schema: schemaHTML,
 		init() {
 			this.rerender = this.rerender.bind(this);
 		},
@@ -521,10 +608,9 @@
 		remove() {
 			if (this.el.getObject3D('html')) {
 				this.el.removeObject3D('html');
-				this.observer.disconnect();
 				this.data.removeEventListener('change', this.rerender);
 			}
-		}
+		},
 	});
 
 })(THREE);

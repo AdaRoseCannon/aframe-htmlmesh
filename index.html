@@ -56,8 +56,8 @@
 
 				<!-- These also do teleportaion for Blink controls in VR -->
 				<!-- These are present for hand tracking but hands don't have joysticks so do nothing -->
-				<a-entity data-right="ray" mixin="blink"></a-entity>
-				<a-entity data-left="ray" mixin="blink"></a-entity>
+				<a-entity data-right="ray" mixin="blink" html-pointer="" rayCaster="objects:[html];far:0.3;showLine:true;"></a-entity>
+				<a-entity data-left="ray" mixin="blink" html-pointer="" rayCaster="objects:[html];far:0.3;showLine:true;"></a-entity>
 
 				<!-- Use the finger tips for teleporting when the user points in VR with hand tracking -->
 				<a-entity data-right="index-finger-tip" mixin="blink"
@@ -108,15 +108,15 @@
 				<h2>Change Color</h2>
 				<fieldset style="border:0 none;border-top: 1px solid grey;">
 					<legend>Colour</legend>
-					<label><input onclick="handleRadio(this)" type="radio" name="color" value="red" checked> Red</label>
-					<label><input onclick="handleRadio(this)" type="radio" name="color" value="blue"> Blue</label>
+					<input onclick="handleRadio(this)" type="radio" id="color-red" name="color" value="red" checked><label for="color-red"> Red</label>
+					<input onclick="handleRadio(this)" type="radio" id="color-blue" name="color" value="blue"><label for="color-blue"> Blue</label>
 				</fieldset>
 				<fieldset style="border-width: 0 1px; border-style: solid;border-radius: 0.5em;">
 					<legend>Material:</legend>
-					<label><input onclick="handleCheckbox(this)" type="checkbox" name="wireframe"> Wireframe</label>
-					<label><input onclick="handleCheckbox(this)" type="checkbox" name="shiny" checked> Shiny</label>
+					<input onclick="handleCheckbox(this)" id="material-wireframe" type="checkbox" name="wireframe"><label for="material-wireframe"> Wireframe</label>
+					<input onclick="handleCheckbox(this)" id="material-shiny" type="checkbox" name="shiny" checked><label for="material-shiny"> Shiny</label>
 				</fieldset>
-				<fieldset>
+				<fieldset style="border-radius: 1em;">
 					<legend>Size:</legend>
 					<input oninput="handleRange(this)" type="range" min="0.1" max="2" value="1" step="0.01" id="myRange" style="background-color: transparent;">
 				</fieldset>
