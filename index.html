@@ -78,10 +78,10 @@
 				</a-entity>
 
 				<!-- markers to let us know the real location of the hands, you probably want to make them visible="false" or just make them empty <a-entities> -->
-				<a-sphere id="left-no-magnet" data-left="grip" data-no-magnet radius="0.01" color="red" visible="false">
-				</a-sphere>
-				<a-sphere id="right-no-magnet" data-right="grip" data-no-magnet radius="0.01" color="green"
-					visible="false"></a-sphere>
+				<a-entity id="left-no-magnet" data-left="grip" data-no-magnet radius="0.01">
+					<a-entity html="#my-interface" position="-0.09313 0.05693 0.01635" rotation="-20 90 0" scale="0.5 0.5 0.5"></a-entity>
+				</a-entity>
+				<a-entity id="right-no-magnet" data-right="grip" data-no-magnet radius="0.01"></a-entity>
 			</a-entity>
 		</a-entity>
 
