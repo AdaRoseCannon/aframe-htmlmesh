@@ -1,8 +1,8 @@
 {
-  "name": "aframe-html",
+  "name": "aframe-htmlmesh",
   "version": "1.0.0",
   "description": "Show HTML elements in AFrame",
-  "repository": "https://github.com/AdaRoseCannon/aframe-html",
+  "repository": "https://github.com/AdaRoseCannon/aframe-htmlmesh",
   "scripts": {
     "docs": "awk '\n BEGIN {p=1}\n /^<!--DOCS-->/ {print;system(\"node ./aframe-to-md.mjs ./build/aframe-html.js\");p=0}\n /^<!--DOCS_END-->/ {p=1}\n p' README.md > ~README.md && mv ~README.md README.md",
     "build": "rollup -c && find build -maxdepth 2 -iname \"*.js\" -not -type d -exec du -h {} \\;;npm run docs",
