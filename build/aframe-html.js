@@ -564,7 +564,7 @@
 			this.el.addEventListener('raycaster-intersection', this.onIntersection);
 			this.el.addEventListener('raycaster-intersection-cleared', this.onIntersectionCleared);
 			
-			const geom = new THREE.TorusGeometry( 0.007, 0.002, 5, 12 );
+			const geom = new THREE.SphereGeometry( 0.007, 12, 6 );
 			const mesh = new THREE.Mesh(
 				geom, new THREE.MeshBasicMaterial( { color: 0x000000 } )
 			);
