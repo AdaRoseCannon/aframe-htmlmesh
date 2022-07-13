@@ -43,6 +43,7 @@
 		renderer="alpha:true;physicallyCorrectLights:true;colorManagement:true;exposure:1;toneMapping:ACESFilmic;"
 		gltf-model="dracoDecoderPath: https://cdn.jsdelivr.net/npm/three@0.129.0/examples/js/libs/draco/gltf/;"
 		shadow="type: pcfsoft"
+		cursor="rayOrigin: mouse" raycaster="objects: [html]"
 	>
 
 		<a-assets>
@@ -60,17 +61,15 @@
 
 				<!-- These also do teleportaion for Blink controls in VR -->
 				<!-- These are present for hand tracking but hands don't have joysticks so do nothing -->
-				<a-entity data-right="ray" mixin="blink" html-pointer="" rayCaster="objects:[html];far:0.3;showLine:false;lineColor:black;"></a-entity>
-				<a-entity data-left="ray" mixin="blink" html-pointer="" rayCaster="objects:[html];far:0.3;showLine:false;lineColor:black;"></a-entity>
+				<a-entity data-right="ray" mixin="blink"></a-entity>
+				<a-entity data-left="ray" mixin="blink"></a-entity>
 
 				<!-- Use the finger tips for teleporting when the user points in VR with hand tracking -->
 				<a-entity data-right="index-finger-tip" mixin="blink"
-					blink-controls="startEvents:pose_point;cancelEvents:pose_cancel_point;endEvents:pose_point_fuseLong;"
-					html-pointer="activationType:proximity;proximityTrigger:0.02;proximityElA:#rightThumbTip;proximityElB:#rightFingerJoint;" rayCaster="objects:[html];far:0.3;showLine:true;lineColor:black;">
+					blink-controls="startEvents:pose_point;cancelEvents:pose_cancel_point;endEvents:pose_point_fuseLong;">
 				</a-entity>
 				<a-entity data-left="index-finger-tip" mixin="blink"
-					blink-controls="startEvents:pose_point;cancelEvents:pose_cancel_point;endEvents:pose_point_fuseLong;"
-					html-pointer="activationType:proximity;proximityTrigger:0.02;proximityElA:#leftThumbTip;proximityElB:#leftFingerJoint;" rayCaster="objects:[html];far:0.3;showLine:true;lineColor:black;">
+					blink-controls="startEvents:pose_point;cancelEvents:pose_cancel_point;endEvents:pose_point_fuseLong;">
 				</a-entity>
 
 				<a-sphere radius="0.005" color="white" data-right="thumb-tip" id="rightThumbTip"></a-sphere>
@@ -90,7 +89,7 @@
 
 				<!-- markers to let us know the real location of the hands, you probably want to make them visible="false" or just make them empty <a-entities> -->
 				<a-entity id="left-no-magnet" data-left="grip" data-no-magnet radius="0.01">
-					<a-entity html="#my-interface" position="-0.142 -0.0166 -0.02928" rotation="-80 90 0" scale="0.5 0.5 0.5"></a-entity>
+					<a-entity html="html:#my-interface" position="-0.142 -0.0166 -0.02928" rotation="-80 90 0" scale="0.5 0.5 0.5"></a-entity>
 				</a-entity>
 				<a-entity id="right-no-magnet" data-right="grip" data-no-magnet radius="0.01"></a-entity>
 			</a-entity>
@@ -105,35 +104,33 @@
 		<a-entity hide-on-enter-ar position="0 -0.2 0" environment="lighting:none;preset:yavapai;skyType:atmosphere;">
 		</a-entity>
 		<a-torus-knot position="0 1.5 -1" radius="0.1" radius-tubular="0.02" material="shader:phong;reflectivity:0.3;" id="knot"></a-torus-knot>
-		<a-entity html="#my-interface" position="0.25 1.5 -0.5"></a-entity>
+		<a-entity html="html:#my-interface" shadow position="0.25 1.5 -0.5"></a-entity>
 	</a-scene>
 
 	<div id="dom-overlay">
-		<header>
+		<header style="pointer-events: none; user-select: none;">
 			<h1>
 				My Metaverse Site
 			</h1>
 		</header>
-		<div class="overlay-footer">
-			<section style="display: inline-block; background: lavenderblush; color: #333333; border-radius: 1em; padding: 1em; margin:0; accent-color: hotpink;" id="my-interface">
-				<h2>Change Color</h2>
-				<fieldset style="border:0 none;border-top: 1px solid grey;">
-					<legend>Colour</legend>
-					<input onclick="handleRadio(this)" type="radio" id="color-red" name="color" value="red" checked><label for="color-red"> Red</label>
-					<input onclick="handleRadio(this)" type="radio" id="color-blue" name="color" value="blue"><label for="color-blue"> Blue</label>
-				</fieldset>
-				<fieldset style="border-width: 0 1px; border-style: solid;border-radius: 0.5em;">
-					<legend>Material:</legend>
-					<input onclick="handleCheckbox(this)" id="material-wireframe" type="checkbox" name="wireframe"><label for="material-wireframe"> Wireframe</label>
-					<input onclick="handleCheckbox(this)" id="material-shiny" type="checkbox" name="shiny" checked><label for="material-shiny"> Shiny</label>
-				</fieldset>
-				<fieldset style="border-radius: 1em;">
-					<legend>Size:</legend>
-					<input oninput="handleRange(this)" type="range" min="0.1" max="2" value="1" step="0.01" id="myRange" style="background-color: transparent;">
-				</fieldset>
-				<button onclick="AFRAME.scenes[0].exitVR()" style="display: block;">Exit Immersive</button>
-			</section>
-		</div>
+		<section style="display: inline-block; background: lavenderblush; color: #333333; border-radius: 1em; padding: 1em; margin:0; accent-color: hotpink;" id="my-interface">
+			<h2>Change Color</h2>
+			<fieldset style="border:0 none;border-top: 1px solid grey;">
+				<legend>Colour</legend>
+				<input onclick="handleRadio(this)" type="radio" id="color-red" name="color" value="red" checked><label for="color-red"> Red</label>
+				<input onclick="handleRadio(this)" type="radio" id="color-blue" name="color" value="blue"><label for="color-blue"> Blue</label>
+			</fieldset>
+			<fieldset style="border-width: 0 1px; border-style: solid;border-radius: 0.5em;">
+				<legend>Material:</legend>
+				<input onclick="handleCheckbox(this)" id="material-wireframe" type="checkbox" name="wireframe"><label for="material-wireframe"> Wireframe</label>
+				<input onclick="handleCheckbox(this)" id="material-shiny" type="checkbox" name="shiny" checked><label for="material-shiny"> Shiny</label>
+			</fieldset>
+			<fieldset style="border-radius: 1em;">
+				<legend>Size:</legend>
+				<input oninput="handleRange(this)" type="range" min="0.1" max="2" value="1" step="0.01" id="myRange" style="background-color: transparent;">
+			</fieldset>
+			<button onclick="AFRAME.scenes[0].exitVR()" style="display: block;">Exit Immersive</button>
+		</section>
 	</div>
 	<script>
 		function handleRadio(detail) {

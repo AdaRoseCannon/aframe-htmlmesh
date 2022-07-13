@@ -462,7 +462,8 @@ function htmlevent( element, event, x, y ) {
 		view: element.ownerDocument.defaultView
 	};
 
-	window.dispatchEvent( new MouseEvent( event, mouseEventInit ) );
+	// TODO: Find out why this is added. Remove when updated
+	// window.dispatchEvent( new MouseEvent( event, mouseEventInit ) );
 
 	const rect = element.getBoundingClientRect();
 
