@@ -462,7 +462,7 @@ function htmlevent( element, event, x, y ) {
 		view: element.ownerDocument.defaultView
 	};
 
-	// TODO: Find out why this is added. Remove when updated
+	// TODO: Find out why this is added. Keep commented out when this file is updated
 	// window.dispatchEvent( new MouseEvent( event, mouseEventInit ) );
 
 	const rect = element.getBoundingClientRect();

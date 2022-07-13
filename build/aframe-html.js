@@ -455,7 +455,7 @@
 			view: element.ownerDocument.defaultView
 		};
 
-		// TODO: Find out why this is added. Remove when updated
+		// TODO: Find out why this is added. Keep commented out when this file is updated
 		// window.dispatchEvent( new MouseEvent( event, mouseEventInit ) );
 
 		const rect = element.getBoundingClientRect();
@@ -569,7 +569,7 @@
 
 				if (this.cursor) {
 					this.cursor.visible = true;
-					mesh.worldToLocal(this.cursor.position.copy(intersection.point));
+					this.cursor.parent.worldToLocal(this.cursor.position.copy(intersection.point));
 				}
 			}
 		},

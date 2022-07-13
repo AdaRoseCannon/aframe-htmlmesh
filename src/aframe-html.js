@@ -72,7 +72,7 @@ AFRAME.registerComponent('html', {
 
 			if (this.cursor) {
 				this.cursor.visible = true;
-				mesh.worldToLocal(this.cursor.position.copy(intersection.point));
+				this.cursor.parent.worldToLocal(this.cursor.position.copy(intersection.point));
 			}
 		}
 	},
