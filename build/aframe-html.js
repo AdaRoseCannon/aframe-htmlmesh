@@ -514,7 +514,7 @@
 
 	{
 		schemaHTML.html.description = `HTML element to use.`;
-		schemaHTML.cursor.description = `Cursor element to use.`;
+		schemaHTML.cursor.description = `Visual indicator for where the user is currently pointing`;
 	}
 
 	const _pointer = new THREE.Vector2();
@@ -524,11 +524,25 @@
 		init() {
 			this.rerender = this.rerender.bind(this);
 			this.handle = this.handle.bind(this);
-			this.el.addEventListener('click', e => this.handle('click', e));
-			this.el.addEventListener('mouseleave', e => this.handle('mouseleave', e));
-			this.el.addEventListener('mouseenter', e => this.handle('mouseenter', e));
-			this.el.addEventListener('mouseup', e => this.handle('mouseup', e));
-			this.el.addEventListener('mousedown', e => this.handle('mousedown', e));
+			this.onClick = e => this.handle('click', e);
+			this.onMouseLeave = e => this.handle('mouseleave', e);
+			this.onMouseEnter = e => this.handle('mouseenter', e);
+			this.onMouseUp = e => this.handle('mouseup', e);
+			this.onMouseDown = e => this.handle('mousedown', e);
+		},
+		play() {
+			this.el.addEventListener('click', this.onClick);
+			this.el.addEventListener('mouseleave', this.onMouseLeave);
+			this.el.addEventListener('mouseenter', this.onMouseEnter);
+			this.el.addEventListener('mouseup', this.onMouseUp);
+			this.el.addEventListener('mousedown', this.onMouseDown);
+		},
+		pause() {
+			this.el.removeEventListener('click', this.onClick);
+			this.el.removeEventListener('mouseleave', this.onMouseLeave);
+			this.el.removeEventListener('mouseenter', this.onMouseEnter);
+			this.el.removeEventListener('mouseup', this.onMouseUp);
+			this.el.removeEventListener('mousedown', this.onMouseDown);
 		},
 		update() {
 			this.remove();
@@ -580,10 +594,15 @@
 			}
 		},
 		remove() {
-			if (this.el.getObject3D('html')) {
+			const mesh = this.el.getObject3D('html');
+			if (mesh) {
 				this.el.removeObject3D('html');
+				this.data.html.removeEventListener('input', this.rerender);
 				this.data.html.removeEventListener('change', this.rerender);
+				mesh.dispose();
 			}
+			this.activeRaycaster = null;
+			this.cursor = null;
 		},
 	});
 
