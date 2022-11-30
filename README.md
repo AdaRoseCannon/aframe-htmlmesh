@@ -10,9 +10,9 @@
 <!--DOCS-->
 ### html component
 
-| Property | Type     | Description            | Default |
-| :------- | :------- | :--------------------- | :------ |
-| html     | selector | HTML element to use.   |         |
+| Property | Type     | Description                                               | Default |
+| :------- | :------- | :-------------------------------------------------------- | :------ |
+| html     | selector | HTML element to use.                                      |         |
 | cursor   | selector | Visual indicator for where the user is currently pointing |         |
 
 <!--DOCS_END-->
