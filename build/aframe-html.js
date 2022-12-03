@@ -1,6 +1,8 @@
 (function (three) {
 	'use strict';
 
+	// This is the same as https://github.com/mrdoob/three.js/commit/b354e68f185b34e798e7b86ca03c70e9bb5f7bc7
+
 	class HTMLMesh extends three.Mesh {
 
 		constructor( dom ) {
@@ -29,6 +31,8 @@
 				material.dispose();
 
 				material.map.dispose();
+
+				canvases.delete( dom );
 
 				this.removeEventListener( 'mousedown', onEvent );
 				this.removeEventListener( 'mousemove', onEvent );
@@ -419,17 +423,14 @@
 
 		const offset = element.getBoundingClientRect();
 
-		let canvas;
+		let canvas = canvases.get( element );
 
-		if ( canvases.has( element ) ) {
-
-			canvas = canvases.get( element );
-
-		} else {
+		if ( canvas === undefined ) {
 
 			canvas = document.createElement( 'canvas' );
 			canvas.width = offset.width;
 			canvas.height = offset.height;
+			canvases.set( element, canvas );
 
 		}
 
@@ -529,6 +530,12 @@
 			this.onMouseEnter = e => this.handle('mouseenter', e);
 			this.onMouseUp = e => this.handle('mouseup', e);
 			this.onMouseDown = e => this.handle('mousedown', e);
+			this.mouseMoveDetail = {
+				detail: {
+					cursorEl: null,
+					intersection: null
+				}
+			};
 		},
 		play() {
 			this.el.addEventListener('click', this.onClick);
@@ -556,12 +563,9 @@
 		tick() {
 			if (this.activeRaycaster) {
 				const intersection = this.activeRaycaster.components.raycaster.getIntersection(this.el);
-				this.handle('mousemove', {
-					detail: {
-						cursorEl: this.activeRaycaster,
-						intersection
-					}
-				});
+				this.mouseMoveDetail.detail.cursorEl = this.activeRaycaster;
+				this.mouseMoveDetail.detail.intersection = intersection;
+				this.handle('mousemove', this.mouseMoveDetail);
 			}
 		},
 		handle(type, evt) {
@@ -602,6 +606,8 @@
 				mesh.dispose();
 			}
 			this.activeRaycaster = null;
+			this.mouseMoveDetail.detail.cursorEl = null;
+			this.mouseMoveDetail.detail.intersection = null;
 			this.cursor = null;
 		},
 	});
