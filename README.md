@@ -1,7 +1,7 @@
 # AFrame-HTML
 
 ```html
-<a-sphere color="black" radius="0.01" id="cursor" material="shader:flat"></a-sphere>
+<a-sphere color="black" radius="0.01" id="cursor" material="shader:flat" visible="false"></a-sphere>
 <a-entity html="html:#my-interface;cursor:#cursor;" position="0 1.5 -0.5"></a-entity>
 ```
 
