@@ -32,6 +32,12 @@ AFRAME.registerComponent('html', {
 		this.onMouseEnter = e => this.handle('mouseenter', e);
 		this.onMouseUp = e => this.handle('mouseup', e);
 		this.onMouseDown = e => this.handle('mousedown', e);
+		this.mouseMoveDetail = {
+			detail: {
+				cursorEl: null,
+				intersection: null
+			}
+		};
 	},
 	play() {
 		this.el.addEventListener('click', this.onClick);
@@ -59,12 +65,9 @@ AFRAME.registerComponent('html', {
 	tick() {
 		if (this.activeRaycaster) {
 			const intersection = this.activeRaycaster.components.raycaster.getIntersection(this.el);
-			this.handle('mousemove', {
-				detail: {
-					cursorEl: this.activeRaycaster,
-					intersection
-				}
-			});
+			this.mouseMoveDetail.detail.cursorEl = this.activeRaycaster;
+			this.mouseMoveDetail.detail.intersection = intersection;
+			this.handle('mousemove', this.mouseMoveDetail);
 		}
 	},
 	handle(type, evt) {
@@ -105,6 +108,8 @@ AFRAME.registerComponent('html', {
 			mesh.dispose();
 		}
 		this.activeRaycaster = null;
+		this.mouseMoveDetail.detail.cursorEl = null;
+		this.mouseMoveDetail.detail.intersection = null;
 		this.cursor = null;
 	},
 });

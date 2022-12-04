@@ -1,3 +1,7 @@
+// This is the same as https://github.com/mrdoob/three.js/commit/b354e68f185b34e798e7b86ca03c70e9bb5f7bc7
+// minus the code style and the window.dispatchEvent line commented see TODO.
+// Look at https://github.com/mrdoob/three.js/commits/dev/examples/jsm/interactive/HTMLMesh.js
+// to see if there are other changes that can be retrieved here.
 import {
 	CanvasTexture,
 	LinearFilter,
@@ -36,6 +40,8 @@ class HTMLMesh extends Mesh {
 			material.dispose();
 
 			material.map.dispose();
+
+			canvases.delete( dom );
 
 			this.removeEventListener( 'mousedown', onEvent );
 			this.removeEventListener( 'mousemove', onEvent );
@@ -426,17 +432,14 @@ function html2canvas( element ) {
 
 	const offset = element.getBoundingClientRect();
 
-	let canvas;
+	let canvas = canvases.get( element );
 
-	if ( canvases.has( element ) ) {
-
-		canvas = canvases.get( element );
-
-	} else {
+	if ( canvas === undefined ) {
 
 		canvas = document.createElement( 'canvas' );
 		canvas.width = offset.width;
 		canvas.height = offset.height;
+		canvases.set( element, canvas );
 
 	}
 
