@@ -526,6 +526,14 @@ function htmlevent( element, event, x, y ) {
 
 				element.dispatchEvent( new MouseEvent( event, mouseEventInit ) );
 
+				if ( element instanceof HTMLButtonElement ) {
+					switch ( event ) {
+						case 'mousemove': element.classList.add('hover'); break;
+						case 'mousedown': element.classList.add('active'); break;
+						case 'mouseup': element.classList.remove('active'); break;
+					}
+				}
+
 				if ( element instanceof HTMLInputElement && element.type === 'range' && ( event === 'mousedown' || event === 'click' ) ) {
 
 					const [ min, max ] = [ 'min', 'max' ].map( property => parseFloat( element[ property ] ) );
@@ -538,6 +546,11 @@ function htmlevent( element, event, x, y ) {
 
 				}
 
+			} else {
+				if ( element instanceof HTMLButtonElement ) {
+					element.classList.remove('hover');
+					element.classList.remove('active');
+				}
 			}
 
 			for ( let i = 0; i < element.childNodes.length; i ++ ) {
