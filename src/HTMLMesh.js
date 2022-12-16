@@ -75,7 +75,7 @@ class HTMLTexture extends CanvasTexture {
 			if ( ! this.scheduleUpdate ) {
 
 				// ideally should use xr.requestAnimationFrame, here setTimeout to avoid passing the renderer
-				this.scheduleUpdate = setTimeout( () => this.update(), 16 );
+				this.scheduleUpdate = setTimeout( () => this.update(), 100 );
 
 			}
 
