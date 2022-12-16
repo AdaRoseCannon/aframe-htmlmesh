@@ -29,6 +29,7 @@ class HTMLMesh extends Mesh {
 
 		}
 
+		this.addEventListener( 'mouseleave', onEvent );
 		this.addEventListener( 'mousedown', onEvent );
 		this.addEventListener( 'mousemove', onEvent );
 		this.addEventListener( 'mouseup', onEvent );
@@ -43,6 +44,7 @@ class HTMLMesh extends Mesh {
 
 			canvases.delete( dom );
 
+			this.removeEventListener( 'mouseleave', onEvent );
 			this.removeEventListener( 'mousedown', onEvent );
 			this.removeEventListener( 'mousemove', onEvent );
 			this.removeEventListener( 'mouseup', onEvent );
