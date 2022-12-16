@@ -300,7 +300,7 @@ function html2canvas( element ) {
 
 			if ( backgroundColor !== 'transparent' && backgroundColor !== 'rgba(0, 0, 0, 0)' ) {
 
-				context.fillStyle = backgroundColor;
+				context.fillStyle = element.classList.contains( 'hover' ) ? 'rgb(21, 141, 203)' : backgroundColor;
 				context.fill();
 
 			}
