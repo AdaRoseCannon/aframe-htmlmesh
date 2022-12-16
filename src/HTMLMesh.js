@@ -530,9 +530,13 @@ function htmlevent( element, event, x, y ) {
 
 				if ( element instanceof HTMLButtonElement ) {
 					switch ( event ) {
-						case 'mousemove': element.classList.add('hover'); break;
-						case 'mousedown': element.classList.add('active'); break;
-						case 'mouseup': element.classList.remove('active'); break;
+						case 'mousemove':
+							if ( !element.classList.contains( 'hover' ) ) {
+								element.classList.add('hover');
+							}
+							break;
+//						case 'mousedown': if ( !element.classList.contains( 'active' ) ) element.classList.add('active'); break;
+//						case 'mouseup': if ( !element.classList.contains( 'active' ) ) element.classList.remove('active'); break;
 					}
 				}
 
@@ -550,8 +554,8 @@ function htmlevent( element, event, x, y ) {
 
 			} else {
 				if ( element instanceof HTMLButtonElement ) {
-					element.classList.remove('hover');
-					element.classList.remove('active');
+					if ( element.classList.contains( 'hover' ) ) element.classList.remove( 'hover' );
+//					if ( element.classList.contains( 'active' ) ) element.classList.remove( 'active' );
 				}
 			}
 
