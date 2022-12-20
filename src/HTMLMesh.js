@@ -535,8 +535,6 @@ function htmlevent( element, event, x, y ) {
 								element.classList.add('hover');
 							}
 							break;
-//						case 'mousedown': if ( !element.classList.contains( 'active' ) ) element.classList.add('active'); break;
-//						case 'mouseup': if ( !element.classList.contains( 'active' ) ) element.classList.remove('active'); break;
 					}
 				}
 
@@ -555,7 +553,6 @@ function htmlevent( element, event, x, y ) {
 			} else {
 				if ( element instanceof HTMLButtonElement ) {
 					if ( element.classList.contains( 'hover' ) ) element.classList.remove( 'hover' );
-//					if ( element.classList.contains( 'active' ) ) element.classList.remove( 'active' );
 				}
 			}
 
