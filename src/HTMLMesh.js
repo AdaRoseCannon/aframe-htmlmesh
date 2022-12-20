@@ -123,6 +123,18 @@ class HTMLTexture extends CanvasTexture {
 
 }
 
+// Those are all css properties we use in this file:
+const USED_CSS_PROPERTIES = [
+	'backgroundColor', 'color',
+	'borderRadius',
+	'borderTopWidth', 'borderTopColor', 'borderTopStyle',
+	'borderLeftWidth', 'borderLeftColor', 'borderLeftStyle',
+	'borderBottomWidth', 'borderBottomColor', 'borderBottomStyle',
+	'borderRightWidth', 'borderRightColor', 'borderRightStyle',
+	'accentColor', 'fontFamily', 'fontWeight', 'fontSize', 'textTransform',
+	'paddingLeft', 'paddingTop', 'paddingBottom', 'paddingRight',
+	'overflow'
+];
 
 //
 
@@ -245,6 +257,38 @@ function html2canvas( element ) {
 
 	}
 
+	function getStyleForElement( element ) {
+		const style = window.getComputedStyle( element );
+		if ( element instanceof HTMLButtonElement ) {
+			if ( element.dataset.hoverStyleStored !== 'true' ) {
+				// The first time we render, store hover style in data attributes to make
+				// hover style work in VR because style aren't recomputed when we add the
+				// hover class.
+				if ( element.dataset.hoverStyleStored !== 'pending' ) {
+					// The mutation observer won't trigger rerender if we add the class now because we're currently rendering (scheduleUpdate is defined)
+					// Wait end of render before we modify the DOM.
+					element.dataset.hoverStyleStored = 'pending';
+					setTimeout( () => {
+						// Disable any css transition to avoir having a
+						// background color in between states when rerender is triggered.
+						element.style.transitionDuration = '0s';
+						element.classList.add( 'hover' );
+					}, 0 );
+				} else if ( element.classList.contains( 'hover' ) ){
+					// rerender was called, now store the updated computed style for hover
+					for ( const prop of USED_CSS_PROPERTIES ) {
+						element.dataset[prop] = style[prop];
+					}
+					element.dataset.hoverStyleStored = 'true';
+					setTimeout(() => {
+						element.classList.remove( 'hover' );
+					}, 0);
+				}
+			}
+		}
+		return element.classList.contains( 'hover' ) && element.dataset.hoverStyleStored === 'true' ? element.dataset : style;
+	}
+
 	function drawElement( element, style ) {
 
 		let x = 0, y = 0, width = 0, height = 0;
@@ -290,7 +334,7 @@ function html2canvas( element ) {
 			width = rect.width;
 			height = rect.height;
 
-			style = window.getComputedStyle( element );
+			style = getStyleForElement( element );
 
 			// Get the border of the element used for fill and border
 
@@ -300,7 +344,7 @@ function html2canvas( element ) {
 
 			if ( backgroundColor !== 'transparent' && backgroundColor !== 'rgba(0, 0, 0, 0)' ) {
 
-				context.fillStyle = element.classList.contains( 'hover' ) ? 'rgb(21, 141, 203)' : backgroundColor;
+				context.fillStyle = backgroundColor;
 				context.fill();
 
 			}
