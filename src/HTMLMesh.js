@@ -268,21 +268,21 @@ function html2canvas( element ) {
 					// The mutation observer won't trigger rerender if we add the class now because we're currently rendering (scheduleUpdate is defined)
 					// Wait end of render before we modify the DOM.
 					element.dataset.hoverStyleStored = 'pending';
-					setTimeout( () => {
+					queueMicrotask( () => {
 						// Disable any css transition to avoir having a
 						// background color in between states when rerender is triggered.
 						element.style.transitionDuration = '0s';
 						element.classList.add( 'hover' );
-					}, 0 );
+					} );
 				} else if ( element.classList.contains( 'hover' ) ){
 					// rerender was called, now store the updated computed style for hover
 					for ( const prop of USED_CSS_PROPERTIES ) {
 						element.dataset[prop] = style[prop];
 					}
 					element.dataset.hoverStyleStored = 'true';
-					setTimeout(() => {
+					queueMicrotask( () => {
 						element.classList.remove( 'hover' );
-					}, 0);
+					} );
 				}
 			}
 		}
