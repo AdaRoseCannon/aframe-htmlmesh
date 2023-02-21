@@ -1,5 +1,5 @@
-// This is the same as https://github.com/mrdoob/three.js/commit/b354e68f185b34e798e7b86ca03c70e9bb5f7bc7
-// minus the code style and the window.dispatchEvent line commented see TODO.
+// This is a copy of https://github.com/mrdoob/three.js/blob/e523eb3bce1c10b129f53eae7835791f34a2a17c/examples/jsm/interactive/HTMLMesh.js
+// with a window.dispatchEvent line commented, see the TODO below.
 // Look at https://github.com/mrdoob/three.js/commits/dev/examples/jsm/interactive/HTMLMesh.js
 // to see if there are other changes that can be retrieved here.
 import {
