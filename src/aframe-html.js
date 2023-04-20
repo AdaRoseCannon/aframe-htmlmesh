@@ -38,6 +38,10 @@ AFRAME.registerComponent('html', {
 				intersection: null
 			}
 		};
+		this.sizeChanged = this.sizeChanged.bind(this);
+	},
+	sizeChanged() {
+		this.update();
 	},
 	play() {
 		this.el.addEventListener('click', this.onClick);
@@ -45,6 +49,7 @@ AFRAME.registerComponent('html', {
 		this.el.addEventListener('mouseenter', this.onMouseEnter);
 		this.el.addEventListener('mouseup', this.onMouseUp);
 		this.el.addEventListener('mousedown', this.onMouseDown);
+		this.data.html.addEventListener('size-changed', this.sizeChanged)
 	},
 	pause() {
 		this.el.removeEventListener('click', this.onClick);
@@ -52,6 +57,7 @@ AFRAME.registerComponent('html', {
 		this.el.removeEventListener('mouseenter', this.onMouseEnter);
 		this.el.removeEventListener('mouseup', this.onMouseUp);
 		this.el.removeEventListener('mousedown', this.onMouseDown);
+		this.data.html.removeEventListener('size-changed', this.sizeChanged)
 	},
 	update() {
 		this.remove();

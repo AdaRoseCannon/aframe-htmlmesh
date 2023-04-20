@@ -59,6 +59,7 @@ class HTMLTexture extends CanvasTexture {
 	constructor( dom ) {
 
 		super( html2canvas( dom ) );
+		this.prevCanvasSize = { width: this.image.width, height: this.image.height };
 
 		this.dom = dom;
 
@@ -102,6 +103,12 @@ class HTMLTexture extends CanvasTexture {
 		this.needsUpdate = true;
 
 		this.scheduleUpdate = null;
+
+		if ( this.image.width !== this.prevCanvasSize.width || this.image.height !== this.prevCanvasSize.height ) {
+			this.prevCanvasSize.width = this.image.width;
+			this.prevCanvasSize.height = this.image.height;
+			this.dom.dispatchEvent(new CustomEvent('size-changed'))
+		}
 
 	}
 
@@ -480,11 +487,12 @@ function html2canvas( element ) {
 	if ( canvas === undefined ) {
 
 		canvas = document.createElement( 'canvas' );
-		canvas.width = offset.width;
-		canvas.height = offset.height;
 		canvases.set( element, canvas );
 
 	}
+
+	canvas.width = offset.width;
+	canvas.height = offset.height;
 
 	const context = canvas.getContext( '2d'/*, { alpha: false }*/ );
 
