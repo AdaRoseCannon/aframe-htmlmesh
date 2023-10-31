@@ -1,5 +1,7 @@
-// This is a copy of https://github.com/mrdoob/three.js/blob/e523eb3bce1c10b129f53eae7835791f34a2a17c/examples/jsm/interactive/HTMLMesh.js
-// with a window.dispatchEvent line commented, see the TODO below.
+// This is a copy of https://github.com/mrdoob/three.js/blob/0403020848c26a9605eb91c99a949111ad4a532e/examples/jsm/interactive/HTMLMesh.js
+// with the following changes:
+// - Revert back to using "this.encoding = sRGBEncoding" instead of "this.colorSpace = SRGBColorSpace;" for compatibility with three r147 aframe 1.4.2
+// - window.dispatchEvent line commented, see the TODO below.
 // Look at https://github.com/mrdoob/three.js/commits/dev/examples/jsm/interactive/HTMLMesh.js
 // to see if there are other changes that can be retrieved here.
 import {
