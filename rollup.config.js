@@ -25,7 +25,6 @@ export default [
 				include: ["node_modules/**"],
 			}),
 			// strip({labels: ['documentation']}),
-			// replace({ varType: 'const', replacementLookup: globals })
 		]
 	},
 	{
@@ -44,7 +43,6 @@ export default [
 			commonjs({
 				include: ["node_modules/**"],
 			}),
-			// replace({ varType: 'const', replacementLookup: globals }),
 			strip({labels: ['documentation']}),
 			terser()
 		]
