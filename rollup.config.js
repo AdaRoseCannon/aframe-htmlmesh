@@ -1,7 +1,6 @@
 /* jshint esversion:11 */
 import { terser } from "rollup-plugin-terser";
 import strip from '@rollup/plugin-strip';
-import replace from 'rollup-plugin-replace-imports-with-vars';
 import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
 // import {copyFileSync} from 'fs';
