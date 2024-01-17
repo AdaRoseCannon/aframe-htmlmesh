@@ -78,6 +78,10 @@ AFRAME.registerComponent('html', {
 		}
 		if (type === 'mouseleave' && this.activeRaycaster === raycaster) {
 			this.activeRaycaster = null;
+			_event.type = type;
+			_event.data.set( -1, -1 );
+			const mesh = this.el.getObject3D('html');
+			mesh.dispatchEvent( _event );
 		}
 		if (this.cursor) this.cursor.visible = false;
 		if (intersection) {
