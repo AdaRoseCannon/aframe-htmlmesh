@@ -1,4 +1,4 @@
-// This is a copy of https://github.com/mrdoob/three.js/blob/0403020848c26a9605eb91c99a949111ad4a532e/examples/jsm/interactive/HTMLMesh.js
+// This is a copy of https://github.com/mrdoob/three.js/blob/caddbf4cd84b62d7edf6b9fc937ca709afdfe915/examples/jsm/interactive/HTMLMesh.js
 // with the following changes:
 // - Keep compatibility with three r147 aframe 1.4.2, still using "this.encoding = sRGBEncoding", otherwise using "this.colorSpace = SRGBColorSpace;"
 // - window.dispatchEvent line commented, see the TODO below.
@@ -15,8 +15,30 @@ import {
 	Color
 } from 'three';
 
+/**
+ * This class can be used to render a DOM element onto a canvas and use it as a texture
+ * for a plane mesh.
+ *
+ * A typical use case for this class is to render the GUI of `lil-gui` as a texture so it
+ * is compatible for VR.
+ *
+ * ```js
+ * const gui = new GUI( { width: 300 } ); // create lil-gui instance
+ *
+ * const mesh = new HTMLMesh( gui.domElement );
+ * scene.add( mesh );
+ * ```
+ *
+ * @augments Mesh
+ * @three_import import { HTMLMesh } from 'three/addons/interactive/HTMLMesh.js';
+ */
 class HTMLMesh extends Mesh {
 
+	/**
+	 * Constructs a new HTML mesh.
+	 *
+	 * @param {HTMLElement} dom - The DOM element to display as a plane mesh.
+	 */
 	constructor( dom ) {
 
 		const texture = new HTMLTexture( dom );
@@ -37,6 +59,10 @@ class HTMLMesh extends Mesh {
 		this.addEventListener( 'mouseup', onEvent );
 		this.addEventListener( 'click', onEvent );
 
+		/**
+		 * Frees the GPU-related resources allocated by this instance and removes all event listeners.
+		 * Call this method whenever this instance is no longer used in your app.
+		 */
 		this.dispose = function () {
 
 			geometry.dispose();
@@ -78,6 +104,7 @@ class HTMLTexture extends CanvasTexture {
 
 		this.minFilter = LinearFilter;
 		this.magFilter = LinearFilter;
+		this.generateMipmaps = false;
 
 		// Create an observer on the DOM, and run html2canvas update in the next loop
 		const observer = new MutationObserver( () => {
@@ -520,7 +547,7 @@ function html2canvas( element ) {
 
 	// console.time( 'drawElement' );
 
-	context.clearRect(0, 0, canvas.width, canvas.height);
+	context.clearRect( 0, 0, canvas.width, canvas.height );
 
 	drawElement( element );
 
