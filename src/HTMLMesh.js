@@ -595,6 +595,12 @@ function htmlevent( element, event, x, y ) {
 
 				}
 
+				if ( element instanceof HTMLInputElement && ( element.type === 'text' || element.type === 'number' ) && ( event === 'mousedown' || event === 'click' ) ) {
+
+					element.focus();
+
+				}
+
 			}
 
 			for ( let i = 0; i < element.childNodes.length; i ++ ) {
