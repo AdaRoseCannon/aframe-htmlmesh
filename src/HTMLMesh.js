@@ -229,7 +229,27 @@ function html2canvas( element ) {
 
 	}
 
-	function drawText( style, x, y, string ) {
+	function getLines( ctx, text, maxWidth ) {
+		const words = text.split( " " );
+		const lines = [];
+		let currentLine = words[0];
+
+		for (let i = 1; i < words.length; i++) {
+
+			const word = words[i];
+			const width = ctx.measureText( currentLine + " " + word ).width;
+			if ( width < maxWidth ) {
+				currentLine += " " + word;
+			} else {
+				lines.push( currentLine );
+				currentLine = word;
+			}
+		}
+		lines.push(currentLine);
+		return lines;
+	}
+
+	function drawText( style, x, y, string, maxWidth ) {
 
 		if ( string !== '' ) {
 
@@ -242,7 +262,14 @@ function html2canvas( element ) {
 			context.font = style.fontWeight + ' ' + style.fontSize + ' ' + style.fontFamily;
 			context.textBaseline = 'top';
 			context.fillStyle = style.color;
-			context.fillText( string, x, y + parseFloat( style.fontSize ) * 0.1 );
+			if ( !maxWidth ) {
+				context.fillText( string, x, y + parseFloat( style.fontSize ) * 0.1 );
+			} else {
+				const lines = getLines(context, string, maxWidth);
+				lines.forEach(function(line, i) {
+					context.fillText( line, x, y + parseFloat( style.fontSize ) * 0.1 + i * parseFloat( style.fontSize ) * 1.3 );
+				});
+			}
 
 		}
 
@@ -305,8 +332,11 @@ function html2canvas( element ) {
 			y = rect.top - offset.top - 0.5;
 			width = rect.width;
 			height = rect.height;
+			// On Quest the font used to draw on canvas is bigger than on
+			// the desktop, compensate for this.
+			const maxWidth = width * 1.01; // 1.005 is good, but use 1.01 to be sure
 
-			drawText( style, x, y, element.nodeValue.trim() );
+			drawText( style, x, y, element.nodeValue.trim(), maxWidth );
 
 		} else if ( element instanceof HTMLCanvasElement ) {
 
