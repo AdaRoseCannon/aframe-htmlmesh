@@ -494,7 +494,7 @@ function html2canvas(element) {
 
 				}
 
-				if (element.type === 'color' || element.type === 'text' || element.type === 'number' || element.type === 'email' || element.type === 'password' || element.type === 'search' || element.type === 'tel' || element.type === 'url') {
+				if (element.type === 'color' || element.type === 'text' || element.type === 'number' || element.type === 'email' || element.type === 'password') {
 
 					clipper.add({ x: x, y: y, width: width, height: height });
 
