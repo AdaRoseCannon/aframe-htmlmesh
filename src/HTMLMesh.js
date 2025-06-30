@@ -596,7 +596,7 @@ function htmlevent(element, event, x, y) {
 
 				}
 
-				if (element instanceof HTMLInputElement && (element.type === 'text' || element.type === 'number' || element.type === 'email' || element.type === 'password' || element.type === 'search' || element.type === 'tel' || element.type === 'url') && (event === 'mousedown' || event === 'click')) {
+				if (element instanceof HTMLInputElement && (element.type === 'text' || element.type === 'number' || element.type === 'email' || element.type === 'password') && (event === 'mousedown' || event === 'click')) {
 
 					element.focus();
 
