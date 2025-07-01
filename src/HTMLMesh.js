@@ -498,7 +498,7 @@ function html2canvas( element ) {
 
 					clipper.add( { x: x, y: y, width: width, height: height } );
 
-					const displayValue = element.type === 'password' ? '*'.repeat(element.value.length) : element.value;
+					const displayValue = element.type === 'password' ? '*'.repeat( element.value.length ) : element.value;
 
 					drawText( style, x + parseInt( style.paddingLeft ), y + parseInt( style.paddingTop ), displayValue );
 
