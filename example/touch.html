@@ -1,0 +1,134 @@
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>Basic Example — AFrame HTML</title>
+	<script src="./../aframe-master.js"></script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/aframe-environment-component@1.3.1/dist/aframe-environment-component.min.js"></script>
+	<script src="./../build/aframe-html.js"></script>
+</head>
+
+  <body>
+
+    <script>
+      // 'pressable' makes objects clickable via indexfingers (by touching it)
+      // by putting a tiny raycaster on the indexfingers
+      AFRAME.registerComponent('pressable', {
+          schema: {
+            pressDistance: { default: 0.005 },
+            pressDuration: { default: 300 },
+            immersiveOnly: { default: true } 
+          },
+          init: function() {
+              this.worldPosition = new THREE.Vector3();
+              this.raycaster = new THREE.Raycaster()
+              this.handEls = document.querySelectorAll('[hand-tracking-controls]');
+              this.pressed = false;
+              this.distance = -1
+              // we throttle by distance, to support scenes with loads of clickable objects (far away)
+              this.tick = this.throttleByDistance( () => this.detectPress() )
+          },
+          throttleByDistance: function(f){
+              return function(){
+                 if( this.distance < 0 ) return f() // first call
+                 if( !f.tid ){
+                   let x = this.distance
+                   let y = x*(x*0.05)*1000 // parabolic curve
+                   f.tid = setTimeout( function(){
+                     f.tid = null
+                     f()
+                   }, y )
+                 }
+              }
+          },
+          detectPress: function(){
+              if( !this.el.sceneEl.renderer.xr.isPresenting ) return // ignore events in desktop mode 
+
+              if( this.handEls.length == 0 ){
+                  this.handEls = document.querySelectorAll('[hand-tracking-controls]');
+              }
+              var handEls = this.handEls;
+              var handEl;
+              let minDistance = 5
+
+              // compensate for an object inside a group 
+              let object3D = this.el.object3D.type == "Group" ? this.el.object3D.children[0] : this.el.object3D
+              if( !object3D ) return
+
+              for (var i = 0; i < handEls.length; i++) {
+                  handEl = handEls[i];
+                  let indexTip  = handEl.components['hand-tracking-controls'] ?
+                                  handEl.components['hand-tracking-controls'].indexTipPosition :
+                                  false 
+                  if( ! indexTip ) return // nothing to do here 
+
+                  this.raycaster.far = this.data.pressDistance
+
+                  // Create a direction vector to negative Z
+                  const direction = new THREE.Vector3(0,0,-1.0);
+                  direction.normalize()
+                  this.raycaster.set(indexTip, direction)
+                  intersects = this.raycaster.intersectObjects([object3D],true)
+
+                  object3D.getWorldPosition(this.worldPosition)
+                  distance    = indexTip.distanceTo(this.worldPosition)
+                  minDistance = distance < minDistance ? distance : minDistance 
+
+                  if (intersects.length ){
+                    this.i = this.i || 0;
+                    if( !this.pressed ){
+                      this.el.emit('pressedstarted', intersects);
+                      this.el.emit('click', {intersection: intersects[0]});
+                      this.pressed = setTimeout( () => {
+                        this.el.emit('pressedended', intersects);
+                        this.pressed = null 
+                      }, this.data.pressDuration )
+                    }
+                  }
+              }
+              this.distance = minDistance
+          },
+
+    });
+
+
+    function onTouch(){
+      let $msg = document.querySelector('#msg')
+      msg.innerText = String(new Date()).substr(15,10)
+      msg.style.background = (onTouch.bg = onTouch.bg == 'cyan' ? 'magenta' : 'cyan')
+    }
+    onTouch.bg = 'cyan'
+
+    </script>
+
+    <a-scene webxr="overlayElement:#dom-overlay;">
+      <a-box position="-1 0.5 -3" rotation="0 45 0" color="#4CC3D9"></a-box>
+      <a-sphere position="0 1.25 -5" radius="1.25" color="#EF2D5E"></a-sphere>
+      <a-cylinder position="1 0.75 -3" radius="0.5" height="1.5" color="#FFC65D"></a-cylinder>
+      <a-plane position="0 0 -4" rotation="-90 0 0" width="4" height="4" color="#7BC8A4"></a-plane>
+      <a-sky color="#ECECEC"></a-sky>
+      <a-entity html="cursor:#cursor;html:#my-interface" shadow position="0.25 1.5 -0.5" pressable></a-entity>
+
+      <a-entity id="leftHand" hand-tracking-controls="hand: left;"></a-entity>
+      <a-entity id="rightHand" hand-tracking-controls="hand: right;"></a-entity>
+
+    </a-scene>
+
+    <div id="dom-overlay">
+      <div id="my-interface" style="width:200px; height:240px; background:#FFF; padding: 10px; z-index:1000; font-family:monospace;">
+        <h1 id="foo">Hello</h1> 
+        <br>
+          Touch the button with<br>
+          your indexfinger<br>
+          (requires handtracking)
+          <div id="msg" style="margin-top:10px; text-align:center; padding:20px;"></div> 
+        <br>
+        <button onclick="onTouch()">touch me</button>
+      </div>
+    </div>
+
+
+  </body>
+
+</html>
