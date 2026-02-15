@@ -1,6 +1,6 @@
 {
   "name": "aframe-htmlmesh",
-  "version": "2.6.0",
+  "version": "2.7.0",
   "description": "Show HTML elements in AFrame",
   "exports": {
     ".": "./src/aframe-html.js"

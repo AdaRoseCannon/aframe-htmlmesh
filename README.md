@@ -1,9 +1,13 @@
 # AFrame-HTML
 
+> [!NOTE]
+> Versions 2.7.0 and above dropped support for A-Frame 1.4.2, please use the
+> previous version 2.6.0 if you're still using A-Frame 1.4.2.
+
 Include in `<head>`:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/aframe-htmlmesh@2.6.0/build/aframe-html.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/aframe-htmlmesh@2.7.0/build/aframe-html.min.js"></script>
 ```
 
 and in your `<a-scene>`:
