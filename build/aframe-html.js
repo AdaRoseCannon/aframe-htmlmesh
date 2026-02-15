@@ -80,16 +80,7 @@
 			this.dom = dom;
 
 			this.anisotropy = 16;
-			if ( THREE.REVISION === '147' ) { // Keep compatibility with aframe 1.4.2
-
-				this.encoding = three.sRGBEncoding;
-
-			} else {
-
-				this.colorSpace = three.SRGBColorSpace;
-
-			}
-
+			this.colorSpace = three.SRGBColorSpace;
 			this.minFilter = three.LinearFilter;
 			this.magFilter = three.LinearFilter;
 			this.generateMipmaps = false;
