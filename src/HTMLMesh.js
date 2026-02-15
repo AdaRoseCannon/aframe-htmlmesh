@@ -1,6 +1,5 @@
 // This is a copy of https://github.com/mrdoob/three.js/blob/dd4a1378a06c826e19ae0ed1b2b609a76cdb930a/examples/jsm/interactive/HTMLMesh.js
 // with the following changes:
-// - Keep compatibility with three r147 aframe 1.4.2, still using "this.encoding = sRGBEncoding", otherwise using "this.colorSpace = SRGBColorSpace;"
 // - window.dispatchEvent line commented, see the TODO below.
 // Look at https://github.com/mrdoob/three.js/commits/dev/examples/jsm/interactive/HTMLMesh.js
 // to see if there are other changes that can be retrieved here.
@@ -11,7 +10,6 @@ import {
 	MeshBasicMaterial,
 	PlaneGeometry,
 	SRGBColorSpace,
-	sRGBEncoding,
 	Color
 } from 'three';
 
@@ -92,16 +90,7 @@ class HTMLTexture extends CanvasTexture {
 		this.dom = dom;
 
 		this.anisotropy = 16;
-		if ( THREE.REVISION === '147' ) { // Keep compatibility with aframe 1.4.2
-
-			this.encoding = sRGBEncoding;
-
-		} else {
-
-			this.colorSpace = SRGBColorSpace;
-
-		}
-
+		this.colorSpace = SRGBColorSpace;
 		this.minFilter = LinearFilter;
 		this.magFilter = LinearFilter;
 		this.generateMipmaps = false;
