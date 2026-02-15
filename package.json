@@ -2,6 +2,9 @@
   "name": "aframe-htmlmesh",
   "version": "2.6.0",
   "description": "Show HTML elements in AFrame",
+  "exports": {
+    ".": "./src/aframe-html.js"
+  },
   "repository": "https://github.com/AdaRoseCannon/aframe-htmlmesh",
   "scripts": {
     "docs": "awk '\n BEGIN {p=1}\n /^<!--DOCS-->/ {print;system(\"node ./aframe-to-md.mjs ./build/aframe-html.js\");p=0}\n /^<!--DOCS_END-->/ {p=1}\n p' README.md > ~README.md && mv ~README.md README.md",

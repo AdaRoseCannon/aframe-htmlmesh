@@ -13,6 +13,18 @@ and in your `<a-scene>`:
 <a-entity html="html:#my-interface;cursor:#cursor;" position="0 1.5 -0.5"></a-entity>
 ```
 
+Instead of the jsdelivr cdn, you can also add it to your npm dependencies:
+
+```
+npm install aframe-htmlmesh
+```
+
+and use
+
+```js
+import 'aframe-htmlmesh';
+```
+
 Examples:
 
 - [Basic Example](https://ada.is/aframe-htmlmesh/)
